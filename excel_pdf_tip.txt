@@ -1,0 +1,111 @@
+Data file header (first row is usually a header)
+: df = pd.read_csv(‘data.txt’, header=None) # when the first row is not a header
+Set column names
+: df.columns = [“ID”, “Address”, “City”]
+
+Set column index
+: df.set_index(“ID”) # not revocable
+: df.set_index(“Address”, inplace=True) # set the new index, but the old none will be removed
+: df.set_index(“Name”, inplace=True, drop = False) # Name will be indexed, and keep it also as a data column
+: df.loc[ ]
+: df.iloc[]
+: df.ix[ row, col ] 
+: df.index # index column
+: len(df.index) # number of rows
+: df.shape # row, column
+: df.columns # column names
+Deleting columns & rows
+: df.drop( rowindex, 0) # 0 means row
+: df.drop( df.columns[0:3], 1) # 1 means column
+
+Add new column
+: df[“New column”] = df.shape[0]*[“New value”]
+
+
+Add new row
+: df_t = df.T # transpose
+: df_t[“New Row”] = [“new value1” “new value2”, … ] # adding column
+: df_o = df_t.T # then transpose it
+
+
+Excel spreadsheet
+https://wikidocs.net/91661 
+: pip install openpyxl
+: import openpyxl
+: import os
+: os.chdir( dir)
+: workbook = openpyxl.load_workbook(‘example.xlsx’)
+: type( workbook)
+: sheet = workbook.get_sheet_by_name(‘Sheet1’)
+: workbook.get_sheet_names()
+: cell = sheet[‘A1’]
+: cell = sheet.cell(row=1, column=2)
+
+ : os.chdir( dir)
+ : wb = openpyxl.Workbook()
+ : wb.save(‘example.xlsx’)
+ : sheet2 = wb.create_sheet()
+ : sheet2.title = ‘my name’
+ : wb.create_sheet(index 0, title=’Other sheet’)
+ 
+PDF
+: import PyPDF2
+: https://statkclee.github.io/nlp2/regex-import-text.html (한글처리 포함)
+: import os
+: os.chdir(dir)
+: pdfFile = open(‘abs path\\a.pdf’, ‘rb’)
+: reader = PyPDF2.PdfFileReader(pdfFile)
+: reader.numPages
+: page = reader.getPage(0)
+: page.extractText()
+
+from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+from pdfminer.converter import TextConverter
+from pdfminer.layout import LAParams
+from pdfminer.pdfpage import PDFPage
+from io import StringIO
+
+def convert_pdf_to_txt(path):
+    rsrcmgr = PDFResourceManager()
+    retstr = StringIO()
+    codec = 'utf-8'
+    laparams = LAParams()
+    device = TextConverter(rsrcmgr, retstr, codec=codec, laparams=laparams)
+    fp = open(path, 'rb')
+    interpreter = PDFPageInterpreter(rsrcmgr, device)
+    password = ""
+    maxpages = 0
+    caching = True
+    pagenos=set()
+    
+    for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,caching=caching, check_extractable=True):
+        interpreter.process_page(page)
+        text = retstr.getvalue()
+
+    fp.close()
+    device.close()
+    retstr.close()
+    return text
+    
+extracted_text = convert_pdf_to_txt('data/hangul_sample.pdf')
+print(extracted_text)
+
+: pdf1 = open(‘a1.pdf’, ‘rb’)
+: pdf2 = open(‘a2.pdf’, ‘rb’)
+: reader1 = PyPDF2.PdfFileReader(pdf1)
+: reader2 = PyPDF2.PdfFileReader(pdf2)
+: writer = PyPDF2.PdfFileWriter()
+: for pageNum in range(reader1.numPages):
+:  page = reader1.getPage(pageNum)
+:  writer.addPage(page)
+
+: for pageNum in range(reader2.numPages):
+:   page = reader2.getPage(pageNum)
+:   writer.addPage(page)
+
+: outputFile = open(;combind.pdf’, ‘wb’)
+: writer.write(outputFile)
+: outputFile.close()
+: pdf1.close()
+: pdf2.close()
+
